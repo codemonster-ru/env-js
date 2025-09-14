@@ -14,7 +14,11 @@
         "typescript",
         "environment"
     ],
-    "author": "Codemonster",
+    "author": {
+        "name": "Kirill Kolesnikov",
+        "email": "admin@codemonster.ru",
+        "url": "https://github.com/KolesnikovKirill"
+    },
     "license": "MIT",
     "scripts": {
         "build": "tsc",
