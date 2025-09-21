@@ -29,11 +29,10 @@ jobs:
               run: npm run build
 
             - name: Extract changelog entry
-              id: changelog
               run: |
                   VERSION=${GITHUB_REF_NAME#v}
                   echo "Looking for version: $VERSION"
-                  awk "/## \\[$VERSION\\]/,/^## /" CHANGELOG.md > RELEASE_NOTES.md || true
+                  awk "/## \\[$VERSION\\]/,/^## \\[/" CHANGELOG.md | sed '$d' > RELEASE_NOTES.md || true
                   if [ ! -s RELEASE_NOTES.md ]; then
                     echo "⚠️ No changelog entry found, using default message"
                     echo "Release $VERSION" > RELEASE_NOTES.md
