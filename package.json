@@ -27,8 +27,11 @@
         "build:esm": "tsc -p tsconfig.json",
         "build:cjs": "tsc -p tsconfig.cjs.json",
         "build": "npm run clean && npm run build:esm && npm run build:cjs",
-        "test": "jest",
-        "prepare": "npm run build"
+        "prepare": "npm run build",
+        "test": "jest --passWithNoTests",
+        "release:patch": "npm version patch && git push --follow-tags",
+        "release:minor": "npm version minor && git push --follow-tags",
+        "release:major": "npm version major && git push --follow-tags"
     },
     "devDependencies": {
         "@types/jest": "^30.0.0",
