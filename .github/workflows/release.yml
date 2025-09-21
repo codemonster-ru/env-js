@@ -1,34 +1,48 @@
 name: Release
 
 on:
-    release:
-        types: [published]
+    push:
+        tags:
+            - 'v*'
 
 jobs:
-    publish:
+    release:
         runs-on: ubuntu-latest
 
         steps:
             - name: Checkout repository
               uses: actions/checkout@v4
 
-            - name: Set up Node.js
+            - name: Setup Node.js
               uses: actions/setup-node@v4
               with:
-                  node-version: '20'
+                  node-version: 20
                   registry-url: 'https://registry.npmjs.org'
 
-            - name: Clear cache
-              run: npm cache clear --force
-
             - name: Install dependencies
-              run: npm install
-
-            - name: Run tests
-              run: npm test
+              run: npm ci
 
             - name: Build package
               run: npm run build
+
+            - name: Extract changelog entry
+              id: changelog
+              run: |
+                  VERSION=${GITHUB_REF_NAME#v}
+                  echo "Looking for version: $VERSION"
+                  awk "/## \\[$VERSION\\]/,/^## /" CHANGELOG.md | head -n -1 > RELEASE_NOTES.md || true
+                  if [ ! -s RELEASE_NOTES.md ]; then
+                    echo "⚠️ No changelog entry found, using default message"
+                    echo "Release $VERSION" > RELEASE_NOTES.md
+                  fi
+                  cat RELEASE_NOTES.md
+
+            - name: Create GitHub Release
+              uses: softprops/action-gh-release@v1
+              with:
+                  body_path: RELEASE_NOTES.md
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Publish to npm
               run: npm publish --access public
