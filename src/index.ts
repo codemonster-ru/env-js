@@ -12,11 +12,13 @@ export class Env {
 
     private load(): void {
         if (!fs.existsSync(this.file)) {
-            throw new Error(`.env file not found: ${this.file}`);
+            console.warn(`⚠️ .env file not found: ${this.file}, using defaults`);
+
+            return;
         }
 
         const content = fs.readFileSync(this.file, 'utf-8');
-        const lines = content.split('\n');
+        const lines = content.split(/\r?\n/);
 
         for (let line of lines) {
             line = line.trim();
@@ -24,11 +26,14 @@ export class Env {
             if (!line || line.startsWith('#')) continue;
 
             const [key, ...valueParts] = line.split('=');
-            const value = valueParts.join('=').trim().replace(/^"|"$/g, '');
+            const rawValue = valueParts.join('=').trim();
+            const value = rawValue.replace(/^['"]|['"]$/g, '');
 
             this.variables[key.trim()] = value;
 
-            process.env[key.trim()] = value;
+            if (process.env[key.trim()] === undefined) {
+                process.env[key.trim()] = value;
+            }
         }
     }
 
