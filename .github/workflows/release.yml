@@ -33,7 +33,7 @@ jobs:
               run: |
                   VERSION=${GITHUB_REF_NAME#v}
                   echo "Looking for version: $VERSION"
-                  awk "/## \\[$VERSION\\]/,/^## /" CHANGELOG.md | head -n -1 > RELEASE_NOTES.md || true
+                  awk "/## \\[$VERSION\\]/,/^## /" CHANGELOG.md > RELEASE_NOTES.md || true
                   if [ ! -s RELEASE_NOTES.md ]; then
                     echo "⚠️ No changelog entry found, using default message"
                     echo "Release $VERSION" > RELEASE_NOTES.md
