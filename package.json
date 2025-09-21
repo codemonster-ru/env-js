@@ -1,27 +1,32 @@
 {
     "name": "@codemonster-ru/env",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "description": "Environment variables loader from .env file for Node.js",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
-    "files": [
-        "dist"
-    ],
-    "keywords": [
-        "env",
-        "nodejs",
-        "dotenv",
-        "typescript",
-        "environment"
-    ],
+    "license": "MIT",
     "author": {
         "name": "Kirill Kolesnikov",
         "email": "admin@codemonster.ru",
         "url": "https://github.com/KolesnikovKirill"
     },
-    "license": "MIT",
+    "type": "module",
+    "main": "./dist/cjs/index.js",
+    "module": "./dist/esm/index.js",
+    "types": "./dist/esm/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/esm/index.js",
+            "require": "./dist/cjs/index.js",
+            "types": "./dist/esm/index.d.ts"
+        }
+    },
+    "files": [
+        "dist"
+    ],
     "scripts": {
-        "build": "tsc",
+        "clean": "rm -rf dist",
+        "build:esm": "tsc -p tsconfig.json",
+        "build:cjs": "tsc -p tsconfig.cjs.json",
+        "build": "npm run clean && npm run build:esm && npm run build:cjs",
         "test": "jest",
         "prepare": "npm run build"
     },
@@ -31,5 +36,16 @@
         "ts-jest": "^29.4.1",
         "ts-node": "10.9.2",
         "typescript": "^5.6.3"
-    }
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/codemonster-ru/env-js.git"
+    },
+    "keywords": [
+        "env",
+        "nodejs",
+        "dotenv",
+        "typescript",
+        "environment"
+    ]
 }

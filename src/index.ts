@@ -38,6 +38,22 @@ export class Env {
     }
 
     public get(key: string, defaultValue: string | null = null): string | null {
-        return this.variables[key] ?? defaultValue;
+        return this.variables[key] ?? process.env[key] ?? defaultValue;
     }
+}
+
+let defaultEnv: Env | null = null;
+
+export function loadEnv(file: string = '.env') {
+    defaultEnv = new Env(file);
+
+    return defaultEnv;
+}
+
+export function env(key: string, defaultValue: string | null = null): string | null {
+    if (!defaultEnv) {
+        defaultEnv = new Env();
+    }
+
+    return defaultEnv.get(key, defaultValue);
 }
