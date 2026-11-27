@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/ru/1.0.0/),
 and this project follows [Semantic Versioning](https://semver.org/lang/ru/).
 
+## [1.1.1] - 2026-11-27
+
+### Changed
+
+-   Publish the package from the corrected commit history with npm provenance.
+
 ## [1.1.0] - 2025-09-17
 
 ### ✨ Added

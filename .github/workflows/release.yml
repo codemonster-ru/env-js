@@ -16,6 +16,8 @@ jobs:
         steps:
             - name: Checkout repo
               uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
 
             - name: Setup Node.js
               uses: actions/setup-node@v6
@@ -26,6 +28,18 @@ jobs:
 
             - name: Pin npm for trusted publishing
               run: npm install --global npm@11.17.0
+
+            - name: Verify release tag
+              run: |
+                  version=$(node -p 'require("./package.json").version')
+                  if [ "$GITHUB_REF_NAME" != "v$version" ]; then
+                      echo "::error::The release tag must match the package version v$version."
+                      exit 1
+                  fi
+                  if ! git merge-base --is-ancestor HEAD refs/remotes/origin/main; then
+                      echo "::error::The release tag must point to a commit merged into main."
+                      exit 1
+                  fi
 
             - name: Install dependencies
               run: npm ci
@@ -43,6 +57,9 @@ jobs:
                     echo "Release $VERSION" > RELEASE_NOTES.md
                   fi
                   cat RELEASE_NOTES.md
+
+            - name: Publish to npm
+              run: npm publish --access public --tag latest --provenance
 
             - name: Create GitHub Release (softprops)
               id: release_softprops
@@ -64,6 +81,3 @@ jobs:
                   body_path: RELEASE_NOTES.md
                   draft: false
                   prerelease: false
-
-            - name: Publish to npm
-              run: npm publish --access public
